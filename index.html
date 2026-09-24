@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="kk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Планировщик школьных мероприятий</title>
+    <title>Мектеп шараларын жоспарлағыш</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -61,8 +61,8 @@
                         <i class="fa-solid me-0 fa-calendar-check text-2xl text-indigo-200"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Школьный Планировщик</h1>
-                        <p class="text-xs text-indigo-200">Годовой план и ценности недели</p>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Мектеп Жоспарлағышы</h1>
+                        <p class="text-xs text-indigo-200">Жылдық жоспар және апта құндылықтары</p>
                     </div>
                 </div>
 
@@ -70,23 +70,23 @@
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="openModal('eventModal')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-4 py-2 rounded-lg transition-all shadow-sm flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-plus"></i>
-                        <span>Добавить мероприятие</span>
+                        <span>Шара қосу</span>
                     </button>
                     <button onclick="openModal('staffModal')" class="bg-white/10 hover:bg-white/20 text-white font-medium px-3 py-2 rounded-lg transition-all text-sm flex items-center gap-2">
                         <i class="fa-solid fa-users-gear"></i>
-                        <span class="hidden sm:inline">Ответственные</span>
+                        <span class="hidden sm:inline">Жауаптылар</span>
                     </button>
-                    <button onclick="window.print()" class="bg-white/10 hover:bg-white/20 text-white font-medium px-3 py-2 rounded-lg transition-all text-sm flex items-center gap-2" title="Печать / Сохранить в PDF">
+                    <button onclick="window.print()" class="bg-white/10 hover:bg-white/20 text-white font-medium px-3 py-2 rounded-lg transition-all text-sm flex items-center gap-2" title="Басып шығару / PDF ретінде сақтау">
                         <i class="fa-solid fa-print"></i>
-                        <span class="hidden sm:inline">Печать</span>
+                        <span class="hidden sm:inline">Басып шығару</span>
                     </button>
                     
                     <!-- Backup dropdown / buttons -->
                     <div class="flex items-center space-x-1 bg-white/10 p-1 rounded-lg">
-                        <button onclick="exportData()" class="text-white hover:bg-white/20 p-1.5 rounded transition-all text-sm" title="Экспорт данных (JSON)">
+                        <button onclick="exportData()" class="text-white hover:bg-white/20 p-1.5 rounded transition-all text-sm" title="Деректерді экспорттау (JSON)">
                             <i class="fa-solid fa-download"></i>
                         </button>
-                        <label class="text-white hover:bg-white/20 p-1.5 rounded transition-all text-sm cursor-pointer" title="Импорт данных (JSON)">
+                        <label class="text-white hover:bg-white/20 p-1.5 rounded transition-all text-sm cursor-pointer" title="Деректерді импорттау (JSON)">
                             <i class="fa-solid fa-upload"></i>
                             <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
                         </label>
@@ -100,7 +100,7 @@
 
         <!-- Print Header (Visible only when printing) -->
         <div class="hidden print-only mb-6 text-center border-b pb-4">
-            <h1 class="text-2xl font-bold text-slate-900">План мероприятий школы</h1>
+            <h1 class="text-2xl font-bold text-slate-900">Мектеп іс-шараларының жоспары</h1>
             <p id="printMonthTitle" class="text-lg text-slate-700 font-semibold mt-1"></p>
         </div>
 
@@ -123,9 +123,9 @@
                 <!-- Theme / Title of the Month -->
                 <div class="flex-grow max-w-2xl">
                     <div class="flex items-center justify-between mb-1">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Тема / Название месяца:</label>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Айдың тақырыбы:</label>
                         <button onclick="editMonthTheme()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium no-print flex items-center gap-1">
-                            <i class="fa-solid fa-pen"></i> Изменить
+                            <i class="fa-solid fa-pen"></i> Өзгерту
                         </button>
                     </div>
                     <div id="monthThemeDisplay" class="text-lg font-bold text-slate-800 bg-indigo-50/50 px-3 py-1.5 rounded-lg border border-indigo-100/60">
@@ -136,7 +136,7 @@
                 <!-- Quick Filter / Info -->
                 <div class="flex items-center gap-4 text-sm text-slate-500 no-print border-t lg:border-t-0 pt-3 lg:pt-0 border-slate-100">
                     <div>
-                        Всего событий: <span id="totalEventsCount" class="font-bold text-slate-800">0</span>
+                        Барлық шаралар: <span id="totalEventsCount" class="font-bold text-slate-800">0</span>
                     </div>
                 </div>
 
@@ -150,13 +150,13 @@
     </main>
 
     <footer class="bg-slate-100 border-t border-slate-200 mt-12 py-4 text-center text-xs text-slate-500 no-print">
-        <p>Школьная система планирования мероприятий &bull; Все данные хранятся локально в вашем браузере</p>
+        <p>Мектептегі іс-шараларды жоспарлау жүйесі &bull; Барлық деректер браузеріңізде жергілікті түрде сақталады</p>
     </footer>
 
     <div id="eventModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl border border-slate-100 max-w-lg w-full overflow-hidden transform transition-all">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 id="eventModalTitle" class="text-lg font-bold text-slate-800">Новое мероприятие</h3>
+                <h3 id="eventModalTitle" class="text-lg font-bold text-slate-800">Жаңа іс-шара</h3>
                 <button onclick="closeModal('eventModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
@@ -166,30 +166,30 @@
                 <input type="hidden" id="eventId">
                 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Название мероприятия *</label>
-                    <input type="text" id="eventTitle" required placeholder="Например: Осенний бал / Педсовет" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Шараның атауы *</label>
+                    <input type="text" id="eventTitle" required placeholder="Мысалы: Күзгі бал / Педкеңес" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Месяц *</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Ай *</label>
                         <select id="eventMonthSelect" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             <!-- Filled dynamically -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Дата *</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Күні *</label>
                         <input type="date" id="eventDate" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Время (необязательно)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Уақыты (міндетті емес)</label>
                         <input type="time" id="eventTime" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Ответственный</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Жауапты тұлға</label>
                         <select id="eventStaffSelect" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             <!-- Filled dynamically -->
                         </select>
@@ -197,13 +197,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Дополнительная информация</label>
-                    <textarea id="eventInfo" rows="3" placeholder="Классы, инвентарь, кабинет, ссылки и примечания..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Қосымша ақпарат</label>
+                    <textarea id="eventInfo" rows="3" placeholder="Сыныптар, құрал-жабдықтар, кабинет, сілтемелер мен ескертпелер..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
                 </div>
 
                 <div class="flex justify-end space-x-3 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeModal('eventModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Отмена</button>
-                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors">Сохранить</button>
+                    <button type="button" onclick="closeModal('eventModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Бас тарту</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors">Сақтау</button>
                 </div>
             </form>
         </div>
@@ -212,16 +212,16 @@
     <div id="staffModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl border border-slate-100 max-w-md w-full overflow-hidden transform transition-all">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-slate-800">Список ответственных</h3>
+                <h3 class="text-lg font-bold text-slate-800">Жауаптылар тізімі</h3>
                 <button onclick="closeModal('staffModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
             <div class="p-6 space-y-4">
                 <div class="flex gap-2">
-                    <input type="text" id="newStaffName" placeholder="ФИО учителя / Должность" class="flex-grow border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <input type="text" id="newStaffName" placeholder="Мұғалімнің Т.Ә.Қ. / Лауазымы" class="flex-grow border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     <button onclick="addStaffMember()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors">
-                        Добавить
+                        Қосу
                     </button>
                 </div>
 
@@ -235,7 +235,7 @@
     <div id="editThemeModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl border border-slate-100 max-w-md w-full overflow-hidden transform transition-all">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h3 id="editThemeTitle" class="text-lg font-bold text-slate-800">Редактирование</h3>
+                <h3 id="editThemeTitle" class="text-lg font-bold text-slate-800">Редакциялау</h3>
                 <button onclick="closeModal('editThemeModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
@@ -244,31 +244,31 @@
                 <input type="hidden" id="editThemeType"> <!-- 'month' or 'week' -->
                 <input type="hidden" id="editThemeWeekIndex"> 
                 <div>
-                    <label id="editThemeLabel" class="block text-xs font-semibold text-slate-600 mb-1">Значение</label>
+                    <label id="editThemeLabel" class="block text-xs font-semibold text-slate-600 mb-1">Мәні</label>
                     <input type="text" id="editThemeInput" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeModal('editThemeModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Отмена</button>
-                    <button type="button" onclick="saveThemeChange()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">Сохранить</button>
+                    <button type="button" onclick="closeModal('editThemeModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Бас тарту</button>
+                    <button type="button" onclick="saveThemeChange()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">Сақтау</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Default months structure
+        // Default months structure in Kazakh
         const MONTH_NAMES = [
-            "Сентябрь", "Октябрь", "Ноябрь", "Декабрь", 
-            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август"
+            "Қыркүйек", "Қазан", "Қараша", "Желтоқсан", 
+            "Қаңтар", "Ақпан", "Нарыз", "Сәуір", "Мамыр", "Маусым", "Шілде", "Тамыз"
         ];
 
         // Core Application State
         let appData = {
             currentMonthIndex: 0, // Default to September
             staff: [
-                "Иванова А. П. (Зам. по ВР)",
-                "Петров С. В. (Учитель физкультуры)",
-                "Сидорова Е. Н. (Организатор)",
+                "Иванова А. П. (ТЖ жөніндегі орынбасары)",
+                "Петров С. В. (Дене шынықтыру мұғалімі)",
+                "Сидорова Е. Н. (Тәрбие ұйымдастырушысы)",
                 "Смирнов К. Д. (Педагог-психолог)"
             ],
             // Store month themes/names and week values
@@ -288,13 +288,13 @@
             MONTH_NAMES.forEach((m, idx) => {
                 if (!appData.monthConfigs[idx]) {
                     appData.monthConfigs[idx] = {
-                        theme: `Месячник воспитательной работы (${m})`,
+                        theme: `Тәрбие жұмысының айлығы (${m})`,
                         weeks: [
-                            "Честность и уважение",
-                            "Трудолюбие и ответственность",
-                            "Знания и патриотизм",
-                            "Культура и единство",
-                            "Творчество и спорт"
+                            "Ар-ұят және құрмет",
+                            "Еңбекқорлық және жауапкершілік",
+                            "Білім және отансүйгіштік",
+                            "Мәдениет және бірлік",
+                            "Шығармашылық және спорт"
                         ]
                     };
                 }
@@ -312,7 +312,7 @@
                     const parsed = JSON.parse(saved);
                     appData = { ...appData, ...parsed };
                 } catch (e) {
-                    console.error("Ошибка при загрузке сохраненных данных", e);
+                    console.error("Сақталған деректерді жүктеу қатесі", e);
                 }
             }
         }
@@ -340,7 +340,7 @@
 
         function renderStaffOptions() {
             const select = document.getElementById('eventStaffSelect');
-            select.innerHTML = '<option value="">-- Не выбрано --</option>';
+            select.innerHTML = '<option value="">-- Тандалмаған --</option>';
             appData.staff.forEach(person => {
                 const opt = document.createElement('option');
                 opt.value = person;
@@ -351,7 +351,7 @@
             // Also render management list
             const container = document.getElementById('staffListContainer');
             if (appData.staff.length === 0) {
-                container.innerHTML = '<div class="p-3 text-xs text-slate-400 text-center">Список пуст</div>';
+                container.innerHTML = '<div class="p-3 text-xs text-slate-400 text-center">Тізім бош</div>';
                 return;
             }
 
@@ -387,7 +387,7 @@
             const monthConfig = appData.monthConfigs[currentIdx];
 
             // Display Month Theme
-            document.getElementById('monthThemeDisplay').textContent = monthConfig.theme || "Тема не задана";
+            document.getElementById('monthThemeDisplay').textContent = monthConfig.theme || "Тақырып белгіленбеген";
             document.getElementById('printMonthTitle').textContent = `${MONTH_NAMES[currentIdx]} — ${monthConfig.theme}`;
 
             // Filter events for current month
@@ -416,10 +416,10 @@
             const weeksContainer = document.getElementById('weeksContainer');
             weeksContainer.innerHTML = '';
 
-            const weekHeaders = ["1-я неделя", "2-я неделя", "3-я неделя", "4-я неделя", "5-я неделя"];
+            const weekHeaders = ["1-апта", "2-апта", "3-апта", "4-апта", "5-апта"];
 
             weekHeaders.forEach((weekLabel, wIdx) => {
-                const weekValue = monthConfig.weeks[wIdx] || "Ценность не указана";
+                const weekValue = monthConfig.weeks[wIdx] || "Құндылық көрсетілмеген";
                 const eventsList = weeksEvents[wIdx];
 
                 // Sort events chronologically inside week
@@ -438,12 +438,12 @@
                         <div class="flex items-center space-x-3">
                             <span class="px-2.5 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-md uppercase tracking-wider">${weekLabel}</span>
                             <div class="flex items-center space-x-1.5">
-                                <span class="text-xs text-slate-400 font-semibold uppercase">Ценность:</span>
+                                <span class="text-xs text-slate-400 font-semibold uppercase">Құндылық:</span>
                                 <span class="text-sm font-semibold text-slate-800">${escapeHtml(weekValue)}</span>
                             </div>
                         </div>
                         <button onclick="editWeekValue(${wIdx})" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium self-start sm:self-center no-print flex items-center gap-1">
-                            <i class="fa-solid fa-pen"></i> Редактировать ценность
+                            <i class="fa-solid fa-pen"></i> Құндылықты өңдеу
                         </button>
                     </div>
 
@@ -451,18 +451,18 @@
                     <div class="p-4">
                         ${eventsList.length === 0 ? `
                             <div class="text-center py-6 text-slate-400 text-sm italic">
-                                Нет запланированных мероприятий на этой неделе
+                                Бұл аптада жоспарланған іс-шаралар жоқ
                             </div>
                         ` : `
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse">
                                     <thead>
                                         <tr class="text-xs font-semibold text-slate-400 uppercase border-b border-slate-100 pb-2">
-                                            <th class="py-2 px-3 w-32">Дата и Время</th>
-                                            <th class="py-2 px-3">Мероприятие</th>
-                                            <th class="py-2 px-3 w-48">Ответственный</th>
-                                            <th class="py-2 px-3 w-64">Доп. информация</th>
-                                            <th class="py-2 px-3 text-right w-24 no-print">Действия</th>
+                                            <th class="py-2 px-3 w-32">Күні мен уақыты</th>
+                                            <th class="py-2 px-3">Іс-шара</th>
+                                            <th class="py-2 px-3 w-48">Жауапты</th>
+                                            <th class="py-2 px-3 w-64">Қосымша ақпарат</th>
+                                            <th class="py-2 px-3 text-right w-24 no-print">Әрекеттер</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 text-sm">
@@ -497,10 +497,10 @@
                     </td>
                     <td class="py-3 px-3 align-top text-right no-print">
                         <div class="flex items-center justify-end space-x-2">
-                            <button onclick="editEvent('${ev.id}')" class="text-slate-400 hover:text-indigo-600 p-1 rounded transition-colors" title="Редактировать">
+                            <button onclick="editEvent('${ev.id}')" class="text-slate-400 hover:text-indigo-600 p-1 rounded transition-colors" title="Өңдеу">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button onclick="deleteEvent('${ev.id}')" class="text-slate-400 hover:text-rose-600 p-1 rounded transition-colors" title="Удалить">
+                            <button onclick="deleteEvent('${ev.id}')" class="text-slate-400 hover:text-rose-600 p-1 rounded transition-colors" title="Өшіру">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -562,12 +562,12 @@
             document.getElementById('eventStaffSelect').value = ev.staff || '';
             document.getElementById('eventInfo').value = ev.info || '';
 
-            document.getElementById('eventModalTitle').textContent = "Редактировать мероприятие";
+            document.getElementById('eventModalTitle').textContent = "Іс-шараны өңдеу";
             openModal('eventModal');
         }
 
         function deleteEvent(id) {
-            if (confirm("Вы уверены, что хотите удалить это мероприятие?")) {
+            if (confirm("Бұл іс-шараны өшіргіңіз келетініне сенімдісіз бе?")) {
                 appData.events = appData.events.filter(item => item.id !== id);
                 saveToLocalStorage();
                 renderApp();
@@ -594,8 +594,8 @@
         function editMonthTheme() {
             const currentIdx = appData.currentMonthIndex;
             document.getElementById('editThemeType').value = 'month';
-            document.getElementById('editThemeTitle').textContent = `Тема месяца: ${MONTH_NAMES[currentIdx]}`;
-            document.getElementById('editThemeLabel').textContent = "Название или общая тема месяца";
+            document.getElementById('editThemeTitle').textContent = `Ай тақырыбы: ${MONTH_NAMES[currentIdx]}`;
+            document.getElementById('editThemeLabel').textContent = "Айдың атауы немесе жалпы тақырыбы";
             document.getElementById('editThemeInput').value = appData.monthConfigs[currentIdx].theme || '';
             openModal('editThemeModal');
         }
@@ -604,8 +604,8 @@
             const currentIdx = appData.currentMonthIndex;
             document.getElementById('editThemeType').value = 'week';
             document.getElementById('editThemeWeekIndex').value = weekIdx;
-            document.getElementById('editThemeTitle').textContent = `${weekIdx + 1}-я неделя месяца ${MONTH_NAMES[currentIdx]}`;
-            document.getElementById('editThemeLabel').textContent = "Ценность или направление недели";
+            document.getElementById('editThemeTitle').textContent = `${MONTH_NAMES[currentIdx]} айының ${weekIdx + 1}-аптасы`;
+            document.getElementById('editThemeLabel').textContent = "Аптаның құндылығы немесе бағыты";
             document.getElementById('editThemeInput').value = appData.monthConfigs[currentIdx].weeks[weekIdx] || '';
             openModal('editThemeModal');
         }
@@ -633,7 +633,7 @@
                 document.getElementById('eventForm').reset();
                 document.getElementById('eventId').value = '';
                 document.getElementById('eventMonthSelect').value = appData.currentMonthIndex;
-                document.getElementById('eventModalTitle').textContent = "Новое мероприятие";
+                document.getElementById('eventModalTitle').textContent = "Жаңа іс-шара";
             }
             renderStaffOptions();
             document.getElementById(id).classList.remove('hidden');
@@ -647,7 +647,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `school_schedule_backup_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `mektep_jospar_backup_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -663,12 +663,12 @@
                         saveToLocalStorage();
                         renderMonthDropdowns();
                         renderApp();
-                        alert("Данные успешно импортированы!");
+                        alert("Деректер сәтті импортталды!");
                     } else {
-                        alert("Некорректный формат файла резервной копии.");
+                        alert("Сақтық көшірме файлының форматы қате.");
                     }
                 } catch (err) {
-                    alert("Ошибка при чтении файла!");
+                    alert("Файлды оқу кезінде қате орын алды!");
                 }
             };
             if (event.target.files[0]) {
