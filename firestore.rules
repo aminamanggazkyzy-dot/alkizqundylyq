@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Кто может редактировать: впишите Google-почты учителей
+    function isEditor() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'kassi@gmail.com',
+          'teacher2@gmail.com'
+        ];
+    }
+
+    // Смотреть могут все, менять — только редакторы
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if isEditor();
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isEditor();
+    }
+  }
+}

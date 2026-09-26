@@ -31,6 +31,8 @@
     </script>
     <style>
         body { font-family: 'Montserrat', sans-serif; }
+        /* Кірмеген қолданушыға өңдеу батырмалары көрінбейді */
+        body:not(.can-edit) .editor-only { display: none !important; }
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
@@ -47,8 +49,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="p-1 rounded-full shadow-sm flex-shrink-0">
-                        <img id="headerLogo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ59akVlg_ZKRJtLb9wQb1fW422hWsh-A9WGKTrfvy-tA&s" alt="Лого" class="h-11 w-11 object-contain rounded-full">
+                    <div class="bg-brand-navy border border-white/30 p-1 rounded-full shadow-sm flex-shrink-0">
+                        <img id="headerLogo" src="" alt="Лого" class="h-11 w-11 object-contain rounded-full">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight text-white">
@@ -71,8 +73,15 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
-                    <button onclick="openResponsiblesModal()" class="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-lg transition border border-white/20">
+                <div class="flex items-center gap-2 flex-wrap justify-center">
+                    <span id="userEmail" class="hidden text-[11px] text-blue-100 font-medium max-w-[160px] truncate"></span>
+                    <button id="loginBtn" onclick="login()" class="inline-flex items-center gap-1.5 bg-brand-pink hover:bg-brand-pink/90 text-white text-xs font-bold px-3 py-2 rounded-lg transition shadow-sm">
+                        Кіру
+                    </button>
+                    <button id="logoutBtn" onclick="logout()" class="hidden inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-lg transition border border-white/20">
+                        Шығу
+                    </button>
+                    <button onclick="openResponsiblesModal()" class="editor-only inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-lg transition border border-white/20">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         Жауаптылар
                     </button>
@@ -85,6 +94,11 @@
         </div>
     </header>
 
+    <!-- Status bar (қателер мен хабарламалар) -->
+    <div id="statusBar" class="hidden no-print max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div id="statusBarInner" class="rounded-xl px-4 py-3 text-xs font-semibold border"></div>
+    </div>
+
     <!-- Main Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
@@ -93,7 +107,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-5 bg-gradient-to-r from-brand-navy to-brand-navy-light text-white flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="flex items-center gap-3.5">
-                        <img id="yearlyLogo" src="" alt="Logo" class="h-12 w-12 object-contain rounded-full p-1">
+                        <img id="yearlyLogo" src="" alt="Logo" class="h-12 w-12 object-contain rounded-full bg-brand-navy border border-white/30 p-1">
                         <div>
                             <h2 class="text-xl font-bold tracking-wide text-white">2026-2027 Алқыз Құндылық жоспары</h2>
                             <p class="text-xs text-blue-100 font-medium">Оқу жылы бойынша барлық айлар мен апталардың құндылықтары мен тақырыптары</p>
@@ -144,9 +158,9 @@
                 </div>
 
                 <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                    <button onclick="openEventModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-pink hover:bg-brand-pink/90 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition">
+                    <button onclick="openEventModal()" class="editor-only w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-pink hover:bg-brand-pink/90 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                        Іс-шара қосу
+                        Шара қосу
                     </button>
                 </div>
             </div>
@@ -191,7 +205,7 @@
     <div id="eventModal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full shadow-xl overflow-hidden border border-slate-100">
             <div class="bg-brand-navy px-6 py-4 flex justify-between items-center text-white">
-                <h3 class="text-base font-bold" id="eventModalTitle">Жаңа іс-шара қосу</h3>
+                <h3 class="text-base font-bold" id="eventModalTitle">Жаңа шара қосу</h3>
                 <button onclick="closeEventModal()" class="text-slate-300 hover:text-white transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -200,11 +214,10 @@
                 <input type="hidden" id="eventId">
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Іс-шара атауы <span class="text-brand-pink">*</span></label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Шара атауы <span class="text-brand-pink">*</span></label>
                     <input type="text" id="eventTitle" required placeholder="Мысалы: Олимпиада апталығы" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-pink text-sm">
                 </div>
 
-                <!-- Басталу және Аяқталу күні бір деңгейде өте әдемі выравнивание жасалды -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 h-5 flex items-end">
@@ -240,7 +253,7 @@
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
                     <button type="button" onclick="closeEventModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 text-xs font-semibold transition">Бас тарту</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink/90 text-white text-xs font-bold shadow-sm transition">Сақтау</button>
+                    <button type="submit" id="eventSubmitBtn" class="px-5 py-2 rounded-xl bg-brand-pink hover:bg-brand-pink/90 text-white text-xs font-bold shadow-sm transition disabled:opacity-60">Сақтау</button>
                 </div>
             </form>
         </div>
@@ -268,12 +281,37 @@
         </div>
     </div>
 
-    <script>
-        const EMBEDDED_LOGO = 'logo_white_.png';
-    </script>
-
     <!-- JS Logic -->
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getFirestore, collection, doc, onSnapshot, addDoc, setDoc, deleteDoc,
+            arrayUnion, arrayRemove, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import {
+            getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        // =====================================================================
+        // 1) FIREBASE БАПТАУЛАРЫ — Firebase Console → Project settings → Your apps
+        //    бөлімінен көшіріп, осы жерге қойыңыз
+        // =====================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfSZqRIsSKA0gG8JVMTjqmHJfDjMate_s",
+            authDomain: "amina-f5e12.firebaseapp.com",
+            projectId: "amina-f5e12",
+            storageBucket: "amina-f5e12.firebasestorage.app",
+            messagingSenderId: "853590884342",
+            appId: "1:853590884342:web:75047ec8c9d7f1b1c491d7",
+            measurementId: "G-4J4PH22D43"
+        };
+
+        // 2) ЛОГОТИП — HTML-файлмен бір папкада жатуы керек
+        const EMBEDDED_LOGO = 'logo_white_.png';
+
+        const DEFAULT_RESPONSIBLES = ["А. Сұлтанова", "Б. Нұрғалиев", "Г. Асанова", "Д. Қасымов", "Е. Ахметов"];
+        const LOCAL_KEY = 'alqyz_plan_ui_v7'; // тек таңдалған айды сақтайды
+
         const ACADEMIC_YEAR_DATA = [
             {
                 id: 1, monthName: "ҚЫРКҮЙЕК", theme: "Бірлік және ынтымақтастық",
@@ -360,43 +398,119 @@
             activeTab: 'yearly',
             currentMonthIndex: 0,
             events: [],
-            responsibles: ["А. Сұлтанова", "Б. Нұрғалиев", "Г. Асанова", "Д. Қасымов", "Е. Ахметов"]
+            responsibles: [...DEFAULT_RESPONSIBLES],
+            responsiblesDocExists: false,
+            user: null
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadLogo();
-            loadState();
-            renderYearlyView();
-            renderMonthlyView();
-        });
+        let db = null;
+        let auth = null;
 
-        function loadLogo() {
+        // ------------------------- Көмекші функциялар -------------------------
+        function escapeHtml(str) {
+            return String(str ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        function showStatus(message, type = 'info') {
+            const bar = document.getElementById('statusBar');
+            const inner = document.getElementById('statusBarInner');
+            if (!message) { bar.classList.add('hidden'); return; }
+            const styles = {
+                info: 'bg-blue-50 text-brand-navy border-blue-200',
+                error: 'bg-red-50 text-red-700 border-red-200',
+                warn: 'bg-amber-50 text-amber-800 border-amber-200'
+            };
+            inner.className = `rounded-xl px-4 py-3 text-xs font-semibold border ${styles[type] || styles.info}`;
+            inner.textContent = message;
+            bar.classList.remove('hidden');
+        }
+
+        function errorText(err) {
+            if (err && err.code === 'permission-denied') {
+                return 'Сізде өңдеуге рұқсат жоқ. Әкімшіге хабарласыңыз.';
+            }
+            return 'Қате: ' + (err && err.message ? err.message : err);
+        }
+
+        function loadLocalUi() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(LOCAL_KEY) || '{}');
+                if (Number.isInteger(saved.currentMonthIndex)) state.currentMonthIndex = saved.currentMonthIndex;
+            } catch (e) {}
+        }
+        function saveLocalUi() {
+            try {
+                localStorage.setItem(LOCAL_KEY, JSON.stringify({ currentMonthIndex: state.currentMonthIndex }));
+            } catch (e) {}
+        }
+
+        // ------------------------------ Init ------------------------------
+        function init() {
             document.getElementById('headerLogo').src = EMBEDDED_LOGO;
             document.getElementById('yearlyLogo').src = EMBEDDED_LOGO;
             document.getElementById('printLogo').src = EMBEDDED_LOGO;
-        }
 
-        function loadState() {
-            const savedState = localStorage.getItem('alqyz_plan_state_v6');
-            if (savedState) {
-                try {
-                    const parsed = JSON.parse(savedState);
-                    state.events = parsed.events || [];
-                    state.responsibles = parsed.responsibles || state.responsibles;
-                    state.currentMonthIndex = parsed.currentMonthIndex || 0;
-                } catch (e) {}
-            }
+            loadLocalUi();
             populateMonthSelect();
+            renderYearlyView();
+            renderMonthlyView();
+
+            if (firebaseConfig.apiKey.startsWith('PASTE')) {
+                showStatus('Firebase баптаулары енгізілмеген: кодтағы firebaseConfig бөлімін толтырыңыз.', 'warn');
+                document.getElementById('loginBtn').classList.add('hidden');
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            onAuthStateChanged(auth, user => {
+                state.user = user;
+                document.body.classList.toggle('can-edit', !!user);
+                document.getElementById('loginBtn').classList.toggle('hidden', !!user);
+                document.getElementById('logoutBtn').classList.toggle('hidden', !user);
+                const emailEl = document.getElementById('userEmail');
+                emailEl.textContent = user ? user.email : '';
+                emailEl.classList.toggle('hidden', !user);
+                renderMonthlyView();
+            });
+
+            // Іс-шаралар — нақты уақытта жаңарады
+            onSnapshot(collection(db, 'events'), snap => {
+                state.events = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                showStatus('');
+                renderMonthlyView();
+            }, err => showStatus('Деректерді жүктеу мүмкін болмады. ' + errorText(err), 'error'));
+
+            // Жауаптылар тізімі
+            onSnapshot(doc(db, 'settings', 'responsibles'), snap => {
+                state.responsiblesDocExists = snap.exists();
+                state.responsibles = snap.exists() && Array.isArray(snap.data().list)
+                    ? snap.data().list
+                    : [...DEFAULT_RESPONSIBLES];
+                renderResponsiblesList();
+            }, err => console.error(err));
         }
 
-        function saveState() {
-            localStorage.setItem('alqyz_plan_state_v6', JSON.stringify({
-                events: state.events,
-                responsibles: state.responsibles,
-                currentMonthIndex: state.currentMonthIndex
-            }));
+        // ------------------------------ Auth ------------------------------
+        async function login() {
+            if (!auth) return;
+            try {
+                await signInWithPopup(auth, new GoogleAuthProvider());
+            } catch (err) {
+                if (err.code !== 'auth/popup-closed-by-user') {
+                    showStatus('Кіру мүмкін болмады. ' + errorText(err), 'error');
+                }
+            }
+        }
+        async function logout() {
+            if (auth) await signOut(auth);
         }
 
+        // ------------------------------ Views ------------------------------
         function switchTab(tab) {
             state.activeTab = tab;
             const yearlyView = document.getElementById('yearlyView');
@@ -404,17 +518,20 @@
             const tabYearlyBtn = document.getElementById('tabYearlyBtn');
             const tabMonthlyBtn = document.getElementById('tabMonthlyBtn');
 
+            const active = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm bg-brand-pink text-white";
+            const inactive = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-blue-100 hover:text-white transition-all";
+
             if (tab === 'yearly') {
                 yearlyView.classList.remove('hidden');
                 monthlyView.classList.add('hidden');
-                tabYearlyBtn.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm bg-brand-pink text-white";
-                tabMonthlyBtn.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-blue-100 hover:text-white transition-all";
+                tabYearlyBtn.className = active;
+                tabMonthlyBtn.className = inactive;
                 renderYearlyView();
             } else {
                 yearlyView.classList.add('hidden');
                 monthlyView.classList.remove('hidden');
-                tabMonthlyBtn.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm bg-brand-pink text-white";
-                tabYearlyBtn.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold text-blue-100 hover:text-white transition-all";
+                tabMonthlyBtn.className = active;
+                tabYearlyBtn.className = inactive;
                 renderMonthlyView();
             }
         }
@@ -465,7 +582,7 @@
         function onMonthSelectChange() {
             const select = document.getElementById('monthSelect');
             state.currentMonthIndex = parseInt(select.value, 10);
-            saveState();
+            saveLocalUi();
             renderMonthlyView();
         }
 
@@ -475,7 +592,7 @@
             if (newIdx >= ACADEMIC_YEAR_DATA.length) newIdx = 0;
             state.currentMonthIndex = newIdx;
             document.getElementById('monthSelect').value = newIdx;
-            saveState();
+            saveLocalUi();
             renderMonthlyView();
         }
 
@@ -487,10 +604,14 @@
             return Math.min(idx, totalWeeks - 1);
         }
 
+        function dayOf(dateStr) {
+            return parseInt(String(dateStr).split('-')[2], 10);
+        }
+
         function isEventInWeek(event, weekIdx, totalWeeks) {
             if (!event.date) return false;
-            const startDay = new Date(event.date).getDate();
-            const endDay = event.endDate ? new Date(event.endDate).getDate() : startDay;
+            const startDay = dayOf(event.date);
+            const endDay = event.endDate ? dayOf(event.endDate) : startDay;
 
             const startWeekIdx = getWeekIndexForDay(startDay, totalWeeks);
             const endWeekIdx = getWeekIndexForDay(endDay, totalWeeks);
@@ -514,9 +635,9 @@
 
             currentMonth.weeks.forEach((w, wIdx) => {
                 const weekEvents = monthEvents.filter(e => isEventInWeek(e, wIdx, currentMonth.weeks.length));
-                
-                weekEvents.sort((a,b) => {
-                    const dateCmp = a.date.localeCompare(b.date);
+
+                weekEvents.sort((a, b) => {
+                    const dateCmp = (a.date || '').localeCompare(b.date || '');
                     if (dateCmp !== 0) return dateCmp;
                     return (a.time || '').localeCompare(b.time || '');
                 });
@@ -541,29 +662,29 @@
                                         <th class="py-2.5 px-4">Іс-шара атауы</th>
                                         <th class="py-2.5 px-4">Жауапты</th>
                                         <th class="py-2.5 px-4">Қосымша ақпарат</th>
-                                        <th class="py-2.5 px-4 text-right no-print w-20">Әрекеттер</th>
+                                        <th class="editor-only py-2.5 px-4 text-right no-print w-20">Әрекеттер</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-sm">
                                     ${weekEvents.map(ev => `
                                         <tr class="hover:bg-slate-50/80 transition">
                                             <td class="py-3 px-4 font-bold text-brand-navy whitespace-nowrap">
-                                                <div>${formatDateRange(ev.date, ev.endDate)}</div>${ev.time ? `<div class="text-xs text-brand-pink font-semibold">${ev.time}</div>` : ''}
+                                                <div>${formatDateRange(ev.date, ev.endDate)}</div>${ev.time ? `<div class="text-xs text-brand-pink font-semibold">${escapeHtml(ev.time)}</div>` : ''}
                                             </td>
                                             <td class="py-3 px-4 font-semibold text-slate-800">
-                                                ${ev.title}${ev.endDate && ev.endDate !== ev.date ? `<span class="ml-2 inline-block px-2 py-0.5 text-[10px] bg-blue-50 text-brand-navy font-bold rounded-full border border-blue-100">Период</span>` : ''}
+                                                ${escapeHtml(ev.title)}${ev.endDate && ev.endDate !== ev.date ? `<span class="ml-2 inline-block px-2 py-0.5 text-[10px] bg-blue-50 text-brand-navy font-bold rounded-full border border-blue-100">Период</span>` : ''}
                                             </td>
                                             <td class="py-3 px-4 text-slate-600 font-medium">
                                                 <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md text-xs">
-                                                    ${ev.responsible}
+                                                    ${escapeHtml(ev.responsible)}
                                                 </span>
                                             </td>
-                                            <td class="py-3 px-4 text-slate-500 text-xs">${ev.info || '-'}</td>
-                                            <td class="py-3 px-4 text-right space-x-1 no-print whitespace-nowrap">
-                                                <button onclick="openEventModal('${ev.id}')" class="p-1 text-slate-400 hover:text-brand-navy hover:bg-slate-100 rounded transition" title="Өңдеу">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002 2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                            <td class="py-3 px-4 text-slate-500 text-xs">${ev.info ? escapeHtml(ev.info) : '-'}</td>
+                                            <td class="editor-only py-3 px-4 text-right space-x-1 no-print whitespace-nowrap">
+                                                <button onclick="openEventModal('${escapeHtml(ev.id)}')" class="p-1 text-slate-400 hover:text-brand-navy hover:bg-slate-100 rounded transition" title="Өңдеу">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                                 </button>
-                                                <button onclick="deleteEvent('${ev.id}')" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Өшіру">
+                                                <button onclick="deleteEvent('${escapeHtml(ev.id)}')" class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition" title="Өшіру">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                 </button>
                                             </td>
@@ -589,6 +710,7 @@
             });
         }
 
+        // --------------------------- Жауаптылар ---------------------------
         function openResponsiblesModal() {
             renderResponsiblesList();
             document.getElementById('responsiblesModal').classList.remove('hidden');
@@ -603,29 +725,47 @@
                 const item = document.createElement('div');
                 item.className = "flex justify-between items-center p-3 hover:bg-slate-50 transition";
                 item.innerHTML = `
-                    <span class="text-sm font-semibold text-slate-700">${resp}</span>
+                    <span class="text-sm font-semibold text-slate-700">${escapeHtml(resp)}</span>
                     <button onclick="deleteResponsible(${idx})" class="text-xs text-red-500 hover:text-red-700 font-medium">Өшіру</button>
                 `;
                 container.appendChild(item);
             });
         }
-        function handleAddResponsible(e) {
+        async function handleAddResponsible(e) {
             e.preventDefault();
+            if (!db) return;
             const input = document.getElementById('newResponsibleName');
             const name = input.value.trim();
-            if (name && !state.responsibles.includes(name)) {
-                state.responsibles.push(name);
+            if (!name || state.responsibles.includes(name)) return;
+            const ref = doc(db, 'settings', 'responsibles');
+            try {
+                if (state.responsiblesDocExists) {
+                    await setDoc(ref, { list: arrayUnion(name) }, { merge: true });
+                } else {
+                    await setDoc(ref, { list: [...state.responsibles, name] });
+                }
                 input.value = '';
-                saveState();
-                renderResponsiblesList();
+            } catch (err) {
+                alert(errorText(err));
             }
         }
-        function deleteResponsible(idx) {
-            state.responsibles.splice(idx, 1);
-            saveState();
-            renderResponsiblesList();
+        async function deleteResponsible(idx) {
+            if (!db) return;
+            const name = state.responsibles[idx];
+            if (name === undefined) return;
+            const ref = doc(db, 'settings', 'responsibles');
+            try {
+                if (state.responsiblesDocExists) {
+                    await setDoc(ref, { list: arrayRemove(name) }, { merge: true });
+                } else {
+                    await setDoc(ref, { list: state.responsibles.filter(r => r !== name) });
+                }
+            } catch (err) {
+                alert(errorText(err));
+            }
         }
 
+        // ---------------------------- Іс-шаралар ----------------------------
         function openEventModal(eventId = null) {
             populateEventFormSelects();
 
@@ -634,11 +774,19 @@
                 if (ev) {
                     document.getElementById('eventModalTitle').textContent = 'Шараны өңдеу';
                     document.getElementById('eventId').value = ev.id;
-                    document.getElementById('eventTitle').value = ev.title;
-                    document.getElementById('eventDate').value = ev.date;
+                    document.getElementById('eventTitle').value = ev.title || '';
+                    document.getElementById('eventDate').value = ev.date || '';
                     document.getElementById('eventEndDate').value = ev.endDate || '';
                     document.getElementById('eventTime').value = ev.time || '';
-                    document.getElementById('eventResponsible').value = ev.responsible;
+                    // Жауапты тізімнен өшірілген болса да, таңдауда көрсетеміз
+                    const respSelect = document.getElementById('eventResponsible');
+                    if (ev.responsible && !state.responsibles.includes(ev.responsible)) {
+                        const opt = document.createElement('option');
+                        opt.value = ev.responsible;
+                        opt.textContent = ev.responsible;
+                        respSelect.appendChild(opt);
+                    }
+                    respSelect.value = ev.responsible || '';
                     document.getElementById('eventInfo').value = ev.info || '';
                 }
             } else {
@@ -664,64 +812,78 @@
             });
         }
 
-        function handleSaveEvent(e) {
+        async function handleSaveEvent(e) {
             e.preventDefault();
+            if (!db) return;
             const id = document.getElementById('eventId').value;
             const currentMonth = ACADEMIC_YEAR_DATA[state.currentMonthIndex];
 
             const startDate = document.getElementById('eventDate').value;
             let endDate = document.getElementById('eventEndDate').value;
+            if (endDate && endDate < startDate) endDate = startDate;
 
-            if (endDate && endDate < startDate) {
-                endDate = startDate;
-            }
+            const existing = id ? state.events.find(ev => ev.id === id) : null;
 
             const eventData = {
-                id: id || `ev_${Date.now()}`,
-                monthId: currentMonth.id,
+                monthId: existing ? existing.monthId : currentMonth.id,
                 title: document.getElementById('eventTitle').value.trim(),
                 date: startDate,
                 endDate: endDate || null,
                 time: document.getElementById('eventTime').value,
                 responsible: document.getElementById('eventResponsible').value,
-                info: document.getElementById('eventInfo').value.trim()
+                info: document.getElementById('eventInfo').value.trim(),
+                updatedBy: state.user ? state.user.email : null,
+                updatedAt: serverTimestamp()
             };
 
-            if (id) {
-                const idx = state.events.findIndex(e => e.id === id);
-                if (idx !== -1) state.events[idx] = eventData;
-            } else {
-                state.events.push(eventData);
+            const btn = document.getElementById('eventSubmitBtn');
+            btn.disabled = true;
+            try {
+                if (id) {
+                    await setDoc(doc(db, 'events', id), eventData);
+                } else {
+                    await addDoc(collection(db, 'events'), eventData);
+                }
+                closeEventModal();
+            } catch (err) {
+                alert(errorText(err));
+            } finally {
+                btn.disabled = false;
             }
-
-            saveState();
-            closeEventModal();
-            renderMonthlyView();
         }
 
-        function deleteEvent(id) {
-            if (confirm('Осы іс-шараны өшіруді растайсыз ба?')) {
-                state.events = state.events.filter(e => e.id !== id);
-                saveState();
-                renderMonthlyView();
+        async function deleteEvent(id) {
+            if (!db) return;
+            if (!confirm('Осы іс-шараны өшіруді растайсыз ба?')) return;
+            try {
+                await deleteDoc(doc(db, 'events', id));
+            } catch (err) {
+                alert(errorText(err));
             }
         }
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.split('-');
-            return parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : dateStr;
+            return parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : escapeHtml(dateStr);
         }
 
         function formatDateRange(startDateStr, endDateStr) {
             if (!startDateStr) return '';
             const startFormatted = formatDate(startDateStr);
-            if (!endDateStr || endDateStr === startDateStr) {
-                return startFormatted;
-            }
-            const endFormatted = formatDate(endDateStr);
-            return `${startFormatted} — ${endFormatted}`;
+            if (!endDateStr || endDateStr === startDateStr) return startFormatted;
+            return `${startFormatted} — ${formatDate(endDateStr)}`;
         }
+
+        // Модуль ішіндегі функцияларды HTML-дегі onclick үшін ашамыз
+        Object.assign(window, {
+            switchTab, changeMonth, onMonthSelectChange,
+            openEventModal, closeEventModal, handleSaveEvent, deleteEvent,
+            openResponsiblesModal, closeResponsiblesModal, handleAddResponsible, deleteResponsible,
+            login, logout
+        });
+
+        init();
     </script>
 </body>
 </html>
