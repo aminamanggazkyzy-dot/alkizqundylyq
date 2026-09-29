@@ -285,7 +285,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import {
-            getFirestore, collection, doc, onSnapshot, addDoc, setDoc, deleteDoc,
+            initializeFirestore, collection, doc, onSnapshot, addDoc, setDoc, deleteDoc,
             arrayUnion, arrayRemove, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
         import {
@@ -464,7 +464,8 @@
             }
 
             const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
+            // Long polling — мектеп желілері мен прокси арқылы да жұмыс істейді
+            db = initializeFirestore(app, { experimentalForceLongPolling: true });
             auth = getAuth(app);
 
             onAuthStateChanged(auth, user => {
@@ -479,9 +480,17 @@
             });
 
             // Іс-шаралар — нақты уақытта жаңарады
-            onSnapshot(collection(db, 'events'), snap => {
-                state.events = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                showStatus('');
+            onSnapshot(collection(db, 'events'), { includeMetadataChanges: true }, snap => {
+                state.events = snap.docs.map(d => ({
+                    id: d.id, ...d.data(), _pending: d.metadata.hasPendingWrites
+                }));
+                if (snap.metadata.fromCache) {
+                    showStatus('Серверге қосылу жоқ. Өзгерістер әзірге тек осы компьютерде көрінеді — интернетті тексеріңіз.', 'warn');
+                } else if (snap.metadata.hasPendingWrites) {
+                    showStatus('Өзгерістер серверге жіберілуде...', 'info');
+                } else {
+                    showStatus('');
+                }
                 renderMonthlyView();
             }, err => showStatus('Деректерді жүктеу мүмкін болмады. ' + errorText(err), 'error'));
 
@@ -672,7 +681,7 @@
                                                 <div>${formatDateRange(ev.date, ev.endDate)}</div>${ev.time ? `<div class="text-xs text-brand-pink font-semibold">${escapeHtml(ev.time)}</div>` : ''}
                                             </td>
                                             <td class="py-3 px-4 font-semibold text-slate-800">
-                                                ${escapeHtml(ev.title)}${ev.endDate && ev.endDate !== ev.date ? `<span class="ml-2 inline-block px-2 py-0.5 text-[10px] bg-blue-50 text-brand-navy font-bold rounded-full border border-blue-100">Период</span>` : ''}
+                                                ${escapeHtml(ev.title)}${ev.endDate && ev.endDate !== ev.date ? `<span class="ml-2 inline-block px-2 py-0.5 text-[10px] bg-blue-50 text-brand-navy font-bold rounded-full border border-blue-100">Период</span>` : ''}${ev._pending ? `<span class="no-print ml-2 inline-block px-2 py-0.5 text-[10px] bg-amber-50 text-amber-700 font-bold rounded-full border border-amber-200">Сақталмады әлі</span>` : ''}
                                             </td>
                                             <td class="py-3 px-4 text-slate-600 font-medium">
                                                 <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md text-xs">
@@ -839,11 +848,14 @@
             const btn = document.getElementById('eventSubmitBtn');
             btn.disabled = true;
             try {
-                if (id) {
-                    await setDoc(doc(db, 'events', id), eventData);
-                } else {
-                    await addDoc(collection(db, 'events'), eventData);
-                }
+                const write = id
+                    ? setDoc(doc(db, 'events', id), eventData)
+                    : addDoc(collection(db, 'events'), eventData);
+                // Сервер 15 секундта растамаса — ескертеміз
+                const timeout = new Promise((_, reject) => setTimeout(() => reject({
+                    message: 'Сервер жауап бермеді. Шара әзірге тек осы компьютерде. Интернетті тексеріп, бетті жаңартыңыз.'
+                }), 15000));
+                await Promise.race([write, timeout]);
                 closeEventModal();
             } catch (err) {
                 alert(errorText(err));
@@ -884,6 +896,27 @@
         });
 
         init();
+
+        // Вкладка ұзақ жабық тұрса (ноутбук ұйықтаса, Wi-Fi ауысса), қайта оралғанда
+        // бетті жаңартып, Firebase-ке қайта қосыламыз. Модаль ашық болса — күтеміз.
+        const STALE_AFTER_MS = 5 * 60 * 1000;
+        let hiddenAt = null;
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                hiddenAt = Date.now();
+                return;
+            }
+            const wasAwayLong = hiddenAt && (Date.now() - hiddenAt > STALE_AFTER_MS);
+            const modalOpen = !document.getElementById('eventModal').classList.contains('hidden')
+                || !document.getElementById('responsiblesModal').classList.contains('hidden');
+            hiddenAt = null;
+            if (wasAwayLong && !modalOpen) location.reload();
+        });
+        // Интернет қайта қосылғанда да жаңартамыз
+        window.addEventListener('online', () => {
+            const modalOpen = !document.getElementById('eventModal').classList.contains('hidden');
+            if (!modalOpen) location.reload();
+        });
     </script>
 </body>
 </html>
