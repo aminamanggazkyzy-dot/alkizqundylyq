@@ -484,6 +484,7 @@
                 state.events = snap.docs.map(d => ({
                     id: d.id, ...d.data(), _pending: d.metadata.hasPendingWrites
                 }));
+                state.hasPendingWrites = snap.metadata.hasPendingWrites;
                 if (snap.metadata.fromCache) {
                     showStatus('Серверге қосылу жоқ. Өзгерістер әзірге тек осы компьютерде көрінеді — интернетті тексеріңіз.', 'warn');
                 } else if (snap.metadata.hasPendingWrites) {
@@ -898,24 +899,36 @@
         init();
 
         // Вкладка ұзақ жабық тұрса (ноутбук ұйықтаса, Wi-Fi ауысса), қайта оралғанда
-        // бетті жаңартып, Firebase-ке қайта қосыламыз. Модаль ашық болса — күтеміз.
+        // бетті жаңартып, Firebase-ке қайта қосыламыз.
+        // Модаль ашық болса немесе серверге жетпеген өзгерістер болса — жаңартпаймыз,
+        // әйтпесе олар жоғалып кетеді. Firebase оларды байланыс оралғанда өзі жібереді.
         const STALE_AFTER_MS = 5 * 60 * 1000;
         let hiddenAt = null;
+        function safeToReload() {
+            const modalOpen = !document.getElementById('eventModal').classList.contains('hidden')
+                || !document.getElementById('responsiblesModal').classList.contains('hidden');
+            return !modalOpen && !state.hasPendingWrites;
+        }
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 hiddenAt = Date.now();
                 return;
             }
             const wasAwayLong = hiddenAt && (Date.now() - hiddenAt > STALE_AFTER_MS);
-            const modalOpen = !document.getElementById('eventModal').classList.contains('hidden')
-                || !document.getElementById('responsiblesModal').classList.contains('hidden');
             hiddenAt = null;
-            if (wasAwayLong && !modalOpen) location.reload();
+            if (wasAwayLong && safeToReload()) location.reload();
         });
-        // Интернет қайта қосылғанда да жаңартамыз
+        // Интернет қайта қосылғанда: жіберілмеген өзгерістер болса, Firebase өзі жібереді,
+        // ал болмаса — деректерді жаңарту үшін бетті қайта жүктейміз
         window.addEventListener('online', () => {
-            const modalOpen = !document.getElementById('eventModal').classList.contains('hidden');
-            if (!modalOpen) location.reload();
+            if (safeToReload()) location.reload();
+        });
+        // Жіберілмеген өзгерістер бар кезде вкладканы жапса — ескертеміз
+        window.addEventListener('beforeunload', e => {
+            if (state.hasPendingWrites) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
         });
     </script>
 </body>
